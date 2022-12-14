@@ -6,7 +6,17 @@ import { patchEntities } from '../../../shared/utils/patch-entities';
 import { Task } from '../../models/task.model';
 import { ApiService } from '../../services/api.service';
 
-import { CreateTask, CreateTaskFail, CreateTaskSuccess, GetTasks, GetTasksFail, GetTasksSuccess } from './task.actions';
+import {
+  CreateTask,
+  CreateTaskFail,
+  CreateTaskSuccess,
+  GetTasks,
+  GetTasksFail,
+  GetTasksSuccess,
+  UpdateTask,
+  UpdateTaskFail,
+  UpdateTaskSuccess
+} from './task.actions';
 
 @RequestState('getTasks')
 @Injectable()
@@ -15,6 +25,10 @@ export class GetTasksRequestState {}
 @RequestState('createTask')
 @Injectable()
 export class CreateTaskRequestState {}
+
+@RequestState('updateTask')
+@Injectable()
+export class UpdateTaskRequestState {}
 
 export interface TaskStateModel {
   entities: { [key: number]: Task };
@@ -95,6 +109,39 @@ export class TaskState {
   createTaskFail(
     ctx: StateContext<TaskStateModel>,
     { payload }: CreateTaskFail
+  ) {
+    console.error(payload);
+  }
+
+  @Action(UpdateTask)
+  updateTask(
+    { dispatch }: StateContext<TaskStateModel>,
+    { payload }: UpdateTask
+  ) {
+    const request = this.apiService.patch(`tasks/${payload.id}`, payload);
+
+    return dispatch(
+      createRequestAction({
+        state: UpdateTaskRequestState,
+        request,
+        successAction: UpdateTaskSuccess,
+        failAction: UpdateTaskFail,
+      }),
+    );
+  }
+
+  @Action(UpdateTaskSuccess)
+  updateTaskSuccess(
+    ctx: StateContext<TaskStateModel>,
+    { payload }: UpdateTaskSuccess
+  ) {
+    return patchEntities<TaskStateModel, Task>(ctx, [payload], false);
+  }
+
+  @Action(UpdateTaskFail)
+  updateTaskFail(
+    ctx: StateContext<TaskStateModel>,
+    { payload }: UpdateTaskFail
   ) {
     console.error(payload);
   }
