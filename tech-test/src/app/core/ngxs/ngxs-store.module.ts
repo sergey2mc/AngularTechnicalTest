@@ -6,8 +6,15 @@ import { NgxsRequestsPluginModule } from 'ngxs-requests-plugin';
 
 import { environment } from '../../../environments/environment';
 
-export const STATES = [];
-export const REQUEST_STATES = [];
+import { GetTasksRequestState, TaskState } from './task/task.state';
+
+export const STATES = [
+  TaskState,
+];
+
+export const REQUEST_STATES = [
+  GetTasksRequestState,
+];
 
 @NgModule({
   imports: [
