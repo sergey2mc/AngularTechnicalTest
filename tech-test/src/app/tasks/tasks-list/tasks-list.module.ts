@@ -1,4 +1,7 @@
 import { NgModule } from '@angular/core';
+import { ReactiveFormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 import { MatTableModule } from '@angular/material/table';
 
 import { SharedModule } from '../../shared/shared.module';
@@ -10,6 +13,9 @@ import { TasksListRoutingModule } from './tasks-list-routing.module';
   imports: [
     SharedModule,
     MatTableModule,
+    MatInputModule,
+    MatFormFieldModule,
+    ReactiveFormsModule,
     TasksListRoutingModule,
   ],
   declarations: [TasksListComponent]

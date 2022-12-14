@@ -2,33 +2,110 @@
   <div class="container">
     <h1>Tasks</h1>
 
-    <table mat-table [dataSource]="tasksTableDataSource$ | async">
+    <table mat-table class="tasks-table" [dataSource]="tasksTableDataSource$ | async">
       <!-- Label Column -->
       <ng-container matColumnDef="label">
         <th mat-header-cell *matHeaderCellDef>Label</th>
-        <td mat-cell *matCellDef="let el">{{ el.label }}</td>
+        <td mat-cell *matCellDef="let el">
+          <!--Normal mode-->
+          <ng-template [ngIf]="!el.isEditing" [ngIfElse]="editModeLabelCell">
+            {{ el.label }}
+          </ng-template>
+
+          <!--Edit mode-->
+          <ng-template #editModeLabelCell>
+            <mat-form-field>
+              <input matInput [formControl]="labelControl" />
+            </mat-form-field>
+          </ng-template>
+        </td>
       </ng-container>
 
       <!-- Description Column -->
       <ng-container matColumnDef="description">
         <th mat-header-cell *matHeaderCellDef>Description</th>
-        <td mat-cell *matCellDef="let el">{{ el.description }}</td>
+        <td mat-cell *matCellDef="let el">
+          <!--Normal mode-->
+          <ng-template [ngIf]="!el.isEditing" [ngIfElse]="editModeDescriptionCell">
+            {{ el.description }}
+          </ng-template>
+
+          <!--Edit mode-->
+          <ng-template #editModeDescriptionCell>
+            <mat-form-field>
+              <input matInput [formControl]="descriptionControl" />
+            </mat-form-field>
+          </ng-template>
+        </td>
       </ng-container>
 
       <!-- Category Column -->
       <ng-container matColumnDef="category">
         <th mat-header-cell *matHeaderCellDef>Category</th>
-        <td mat-cell *matCellDef="let el">{{ el.category }}</td>
+        <td mat-cell *matCellDef="let el">
+          <!--Normal mode-->
+          <ng-template [ngIf]="!el.isEditing" [ngIfElse]="editModeCategoryCell">
+            {{ el.category }}
+          </ng-template>
+
+          <!--Edit mode-->
+          <ng-template #editModeCategoryCell>
+            <mat-form-field>
+              <input matInput [formControl]="categoryControl" />
+            </mat-form-field>
+          </ng-template>
+        </td>
       </ng-container>
 
       <!-- Symbol Column -->
       <ng-container matColumnDef="done">
         <th mat-header-cell *matHeaderCellDef>Done</th>
-        <td mat-cell *matCellDef="let el">{{ el.done }}</td>
+        <td mat-cell *matCellDef="let el">
+          <!--Normal mode-->
+          <ng-template [ngIf]="!el.isEditing" [ngIfElse]="editModeDoneCell">
+            {{ el.done }}
+          </ng-template>
+
+          <!--Edit mode-->
+          <ng-template #editModeDoneCell>
+            <mat-form-field>
+              <input matInput [formControl]="doneControl" />
+            </mat-form-field>
+          </ng-template>
+        </td>
+      </ng-container>
+
+      <!-- Symbol Column -->
+      <ng-container matColumnDef="actions">
+        <th mat-header-cell *matHeaderCellDef>Actions</th>
+        <td mat-cell class="actions-cell" *matCellDef="let el">
+          <div class="buttons-wrapper">
+            <!--Normal mode-->
+            <ng-template [ngIf]="!el.isEditing" [ngIfElse]="editModeActionsCell">
+              <button mat-flat-button color="primary" (click)="editTask(el)">
+                Edit
+              </button>
+              <button mat-flat-button color="warn" (click)="deleteTask(el)">
+                Delete
+              </button>
+            </ng-template>
+
+            <!--Edit mode-->
+            <ng-template #editModeActionsCell>
+              <button mat-flat-button color="primary" (click)="saveTask()">
+                Save
+              </button>
+            </ng-template>
+          </div>
+        </td>
       </ng-container>
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
     </table>
+
+    <button mat-fab color="accent" class="add-task-button" (click)="addTask()">
+      <mat-icon>add</mat-icon>
+    </button>
   </div>
 </section>
