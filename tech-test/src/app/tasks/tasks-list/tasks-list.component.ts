@@ -21,6 +21,7 @@ interface TableRow extends Task {
 export class TasksListComponent implements OnInit, OnDestroy {
   tasksTableDataSource$: Observable<MatTableDataSource<TableRow>>;
 
+  filterTasks$: BehaviorSubject<string> = new BehaviorSubject(null);
   setTaskEditMode$: BehaviorSubject<TableRow> = new BehaviorSubject(null);
   addTask$: Subject<TableRow> = new Subject();
   saveTask$: Subject<void> = new Subject();
@@ -72,10 +73,7 @@ export class TasksListComponent implements OnInit, OnDestroy {
         if (_isArray(input)) {
           return input as Task[];
         } else {
-          return [
-            ...acc,
-            input,
-          ] as Task[]
+          return [...acc, input] as Task[]
         }
       }, []),
     );
@@ -83,14 +81,21 @@ export class TasksListComponent implements OnInit, OnDestroy {
     this.tasksTableDataSource$ = combineLatest(
       tasksSource$,
       this.setTaskEditMode$,
+      this.filterTasks$
     ).pipe(
-      map(([tasks, editingTask]: [TableRow[], Task]) => {
+      map(([tasks, editingTask, filterQuery]: [TableRow[], Task, string]) => {
         let modifiedRows: TableRow[] = tasks;
         if (editingTask) {
           modifiedRows = modifiedRows.map(task => ({ ...task, isEditing: task.id === editingTask.id }));
         }
 
-        return new MatTableDataSource(modifiedRows);
+        const dataSource = new MatTableDataSource(modifiedRows);
+
+        if (filterQuery) {
+          dataSource.filter = filterQuery;
+        }
+
+        return dataSource;
       })
     );
 
@@ -148,5 +153,10 @@ export class TasksListComponent implements OnInit, OnDestroy {
 
   deleteTask(task: TableRow) {
     this.deleteTask$.next(task.id);
+  }
+
+  applyFilter(event: Event) {
+    const filterValue = (event.target as HTMLInputElement).value;
+    this.filterTasks$.next(filterValue.trim().toLowerCase());
   }
 }

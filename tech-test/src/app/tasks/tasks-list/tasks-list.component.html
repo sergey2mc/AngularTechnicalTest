@@ -2,6 +2,11 @@
   <div class="container">
     <h1>Tasks</h1>
 
+    <mat-form-field>
+      <mat-label>Filter</mat-label>
+      <input matInput (keyup)="applyFilter($event)" #input>
+    </mat-form-field>
+
     <table mat-table class="tasks-table" [dataSource]="tasksTableDataSource$ | async">
       <!-- Label Column -->
       <ng-container matColumnDef="label">
@@ -102,6 +107,11 @@
 
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+      <!-- Row shown when there is no matching filtered data. -->
+      <tr class="mat-row" *matNoDataRow>
+        <td class="mat-cell" colspan="5">No data matching the filter "{{input.value}}"</td>
+      </tr>
     </table>
 
     <button mat-fab color="accent" class="add-task-button" (click)="addTask()">
