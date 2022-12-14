@@ -12,6 +12,12 @@
         }
       }
 
+      .check-mark-cell {
+        mat-icon {
+          cursor: pointer;
+        }
+      }
+
       .mat-form-field {
         .mat-form-field-infix {
           padding: 0;

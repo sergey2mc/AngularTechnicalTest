@@ -32,9 +32,10 @@ export class TasksListComponent implements OnInit, OnDestroy {
   saveTaskSubscription: Subscription;
   deleteTaskSubscription: Subscription;
 
+  prefixColumns: string[] = ['checkMark'];
   taskColumns: Array<keyof Task> = ['label', 'description', 'category', 'done'];
-  actionColumns: string[] = ['actions'];
-  displayedColumns = [...this.taskColumns, ...this.actionColumns];
+  suffixColumns: string[] = ['actions'];
+  displayedColumns = [...this.prefixColumns, ...this.taskColumns, ...this.suffixColumns];
 
   taskForm: FormGroup = new FormGroup({
     id: new FormControl(null),
@@ -153,6 +154,13 @@ export class TasksListComponent implements OnInit, OnDestroy {
 
   deleteTask(task: TableRow) {
     this.deleteTask$.next(task.id);
+  }
+
+  toggleDoneStatus({ isEditing, ...task }: TableRow) {
+    this.taskService.updateTask({
+      ...task,
+      done: !!task.done ? false : new Date().toISOString(),
+    });
   }
 
   applyFilter(event: Event) {
