@@ -7,6 +7,13 @@ const routes: Routes = [
   {
     path: '',
     component: TasksComponent,
+    children: [
+      {
+        path: '',
+        pathMatch: 'full',
+        loadChildren: () => import('./tasks-list/tasks-list.module').then(m => m.TasksListModule)
+      }
+    ]
   }
 ];
 
