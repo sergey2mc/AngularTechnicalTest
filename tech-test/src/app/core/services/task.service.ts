@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
 
 import { Task } from '../models/task.model';
 import { GetTasksRequestState, TaskStateModel } from '../ngxs/task/task.state';
-import { CreateTask, GetTasks, UpdateTask } from '../ngxs/task/task.actions';
+import { CreateTask, DeleteTask, GetTasks, UpdateTask } from '../ngxs/task/task.actions';
 import { TaskGetterState } from '../ngxs/task/task-getter.state';
 
 @Injectable({
@@ -33,5 +33,9 @@ export class TaskService {
 
   updateTask(input: Task): Observable<TaskStateModel> {
     return this.store.dispatch(new UpdateTask(input));
+  }
+
+  deleteTask(input: number): Observable<TaskStateModel> {
+    return this.store.dispatch(new DeleteTask(input));
   }
 }

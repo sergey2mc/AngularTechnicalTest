@@ -2,6 +2,9 @@ import { Injectable } from '@angular/core';
 import { Action, State, StateContext } from '@ngxs/store';
 import { createRequestAction, RequestState } from 'ngxs-requests-plugin';
 
+import { map } from 'rxjs/operators';
+
+import { deleteEntity } from '../../../shared/utils/delete-entity';
 import { patchEntities } from '../../../shared/utils/patch-entities';
 import { Task } from '../../models/task.model';
 import { ApiService } from '../../services/api.service';
@@ -10,6 +13,9 @@ import {
   CreateTask,
   CreateTaskFail,
   CreateTaskSuccess,
+  DeleteTask,
+  DeleteTaskFail,
+  DeleteTaskSuccess,
   GetTasks,
   GetTasksFail,
   GetTasksSuccess,
@@ -29,6 +35,10 @@ export class CreateTaskRequestState {}
 @RequestState('updateTask')
 @Injectable()
 export class UpdateTaskRequestState {}
+
+@RequestState('deleteTask')
+@Injectable()
+export class DeleteTaskRequestState {}
 
 export interface TaskStateModel {
   entities: { [key: number]: Task };
@@ -142,6 +152,41 @@ export class TaskState {
   updateTaskFail(
     ctx: StateContext<TaskStateModel>,
     { payload }: UpdateTaskFail
+  ) {
+    console.error(payload);
+  }
+
+  @Action(DeleteTask)
+  deleteTask(
+    { dispatch }: StateContext<TaskStateModel>,
+    { payload }: DeleteTask
+  ) {
+    const request = this.apiService.delete(`tasks/${payload}`).pipe(
+      map(() => payload)
+    );
+
+    return dispatch(
+      createRequestAction({
+        state: DeleteTaskRequestState,
+        request,
+        successAction: DeleteTaskSuccess,
+        failAction: DeleteTaskFail,
+      }),
+    );
+  }
+
+  @Action(DeleteTaskSuccess)
+  deleteTaskSuccess(
+    ctx: StateContext<TaskStateModel>,
+    { payload }: DeleteTaskSuccess
+  ) {
+    return deleteEntity<TaskStateModel>(ctx, payload);
+  }
+
+  @Action(DeleteTaskFail)
+  deleteTaskFail(
+    ctx: StateContext<TaskStateModel>,
+    { payload }: DeleteTaskFail
   ) {
     console.error(payload);
   }

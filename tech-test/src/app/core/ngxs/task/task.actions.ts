@@ -13,6 +13,10 @@ const ActionTypes = {
   UPDATE_TASK: '[Task] Update task',
   UPDATE_TASK_SUCCESS: '[Task] Update task success',
   UPDATE_TASK_FAIL: '[Task] Update task fail',
+
+  DELETE_TASK: '[Task] Delete task',
+  DELETE_TASK_SUCCESS: '[Task] Delete task success',
+  DELETE_TASK_FAIL: '[Task] Delete task fail',
 };
 
 export class GetTasks {
@@ -76,6 +80,30 @@ export class UpdateTaskSuccess {
 
 export class UpdateTaskFail {
   static type = ActionTypes.UPDATE_TASK_FAIL;
+
+  constructor(public payload?: HttpErrorResponse) {
+  }
+}
+
+
+
+
+export class DeleteTask {
+  static type = ActionTypes.DELETE_TASK;
+
+  constructor(public payload: number) {
+  }
+}
+
+export class DeleteTaskSuccess {
+  static type = ActionTypes.DELETE_TASK_SUCCESS;
+
+  constructor(public payload: number) {
+  }
+}
+
+export class DeleteTaskFail {
+  static type = ActionTypes.DELETE_TASK_FAIL;
 
   constructor(public payload?: HttpErrorResponse) {
   }
