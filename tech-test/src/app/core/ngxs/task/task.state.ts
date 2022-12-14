@@ -6,11 +6,15 @@ import { patchEntities } from '../../../shared/utils/patch-entities';
 import { Task } from '../../models/task.model';
 import { ApiService } from '../../services/api.service';
 
-import { GetTasks, GetTasksFail, GetTasksSuccess } from './task.actions';
+import { CreateTask, CreateTaskFail, CreateTaskSuccess, GetTasks, GetTasksFail, GetTasksSuccess } from './task.actions';
 
 @RequestState('getTasks')
 @Injectable()
 export class GetTasksRequestState {}
+
+@RequestState('createTask')
+@Injectable()
+export class CreateTaskRequestState {}
 
 export interface TaskStateModel {
   entities: { [key: number]: Task };
@@ -58,6 +62,39 @@ export class TaskState {
   getTasksFail(
     ctx: StateContext<TaskStateModel>,
     { payload }: GetTasksFail
+  ) {
+    console.error(payload);
+  }
+
+  @Action(CreateTask)
+  createTask(
+    { dispatch }: StateContext<TaskStateModel>,
+    { payload }: CreateTask
+  ) {
+    const request = this.apiService.post('tasks', payload);
+
+    return dispatch(
+      createRequestAction({
+        state: CreateTaskRequestState,
+        request,
+        successAction: CreateTaskSuccess,
+        failAction: CreateTaskFail,
+      }),
+    );
+  }
+
+  @Action(CreateTaskSuccess)
+  createTaskSuccess(
+    ctx: StateContext<TaskStateModel>,
+    { payload }: CreateTaskSuccess
+  ) {
+    return patchEntities<TaskStateModel, Task>(ctx, [payload], false);
+  }
+
+  @Action(CreateTaskFail)
+  createTaskFail(
+    ctx: StateContext<TaskStateModel>,
+    { payload }: CreateTaskFail
   ) {
     console.error(payload);
   }
